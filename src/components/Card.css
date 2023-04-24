@@ -1,0 +1,12 @@
+.container_card {
+  display: flex !important;
+  flex-direction: column;
+  padding-top: 100px !important;
+  color: white;
+  background-color: #4b515d;
+  text-decoration: none !important;
+}
+
+.content_card {
+  flex-direction: column;
+}
