@@ -20,6 +20,8 @@ interface WeatherData {
   sys: {
     country: string;
   };
+  message?: string;
+  cod?: string;
 }
 
 function Card() {
@@ -27,6 +29,7 @@ function Card() {
   const [weatherData, setWeatherData] = useState<WeatherData>();
   const [time, setTime] = useState();
   const [clicked, setClicked] = useState(false);
+  const [temperatureUnit, setTemperatureUnit] = useState("Celsius");
 
   const API_KEY = "941f281b8d94d7ce02451d1c05edd5c5";
 
@@ -50,6 +53,39 @@ function Card() {
   const handleClick = () => {
     getData();
     setClicked(true);
+    getTemperature();
+  };
+
+  const handleTemperatureUnitChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setTemperatureUnit(event.target.value);
+  };
+
+  const convertCelsiusToFahrenheit = (celsius: number) => {
+    return (celsius * 9) / 5 + 32;
+  };
+
+  const getTemperature = () => {
+    if (temperatureUnit === "Celsius") {
+      return `${weatherData?.main?.temp} °C`;
+    } else {
+      const fahrenheit = convertCelsiusToFahrenheit(
+        weatherData?.main?.temp || 0
+      );
+      return `${fahrenheit.toFixed(2).slice(0, 4)} °F`;
+    }
+  };
+
+  const getFeelTemperature = () => {
+    if (temperatureUnit === "Celsius") {
+      return `${weatherData?.main?.feels_like} °C`;
+    } else {
+      const fahrenheit = convertCelsiusToFahrenheit(
+        weatherData?.main?.feels_like || 0
+      );
+      return `${fahrenheit.toFixed(2).slice(0, 4)} °F`;
+    }
   };
 
   console.log(weatherData);
@@ -60,7 +96,7 @@ function Card() {
         <div className="container py-5 h-100 ">
           <div className="row d-flex justify-content-center align-items-center content_card ">
             <div className="col-md-8 col-lg-6 col-xl-4">
-              <h3 className="mb-4 pb-2 fw-normal">Pesquise por cidade</h3>
+              <h3 className="mb-4 pb-2 fw-normal">Search by city</h3>
 
               <div className="input-group rounded mb-3">
                 <input
@@ -88,8 +124,9 @@ function Card() {
                     type="radio"
                     name="inlineRadioOptions"
                     id="inlineRadio1"
-                    value="option1"
+                    value="Celsius"
                     defaultChecked
+                    onChange={handleTemperatureUnitChange}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio1">
                     Celsius
@@ -102,7 +139,8 @@ function Card() {
                     type="radio"
                     name="inlineRadioOptions"
                     id="inlineRadio2"
-                    value="option2"
+                    value="Farenheit"
+                    onChange={handleTemperatureUnitChange}
                   />
                   <label className="form-check-label" htmlFor="inlineRadio2">
                     Farenheit
@@ -113,6 +151,7 @@ function Card() {
 
             {clicked && (
               <div className="col-md-8 col-lg-6 col-xl-4">
+                <div className="message_error">{weatherData?.message}</div>
                 <div
                   className="card"
                   style={{ color: "#4B515D", borderRadius: "35px" }}
@@ -131,8 +170,7 @@ function Card() {
                         style={{ color: "#1C2331" }}
                       >
                         {" "}
-                        {weatherData?.main?.temp}
-                        {" C "}
+                        {getTemperature()}{" "}
                       </h6>
                       <span className="small" style={{ color: "#868B94" }}>
                         {weatherData?.weather?.[0]?.main}
@@ -167,7 +205,7 @@ function Card() {
                             style={{ color: "#868B94" }}
                           ></i>{" "}
                           <span className="ms-1">
-                            Feels like: {weatherData?.main?.feels_like} C
+                            Feels like: {getFeelTemperature()}
                           </span>
                         </div>
                       </div>

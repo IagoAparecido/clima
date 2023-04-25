@@ -10,3 +10,10 @@
 .content_card {
   flex-direction: column;
 }
+
+.message_error {
+  text-align: center;
+  padding-bottom: 10px;
+  color: orange;
+  font-size: 1.3rem;
+}
